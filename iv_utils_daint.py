@@ -9,7 +9,7 @@ import os
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import xarray as xr
-import regionmask
+#import regionmask
 import cartopy.crs as ccrs
 import warnings
 import numpy as np
@@ -22,7 +22,7 @@ from ctsm_py.utils import *
 
 # set directories
 outdir = '/scratch/snx3000/ivanderk/'
-outdir = '/project/s1207/ivanderk/scratch/'
+outdir = '/dodrio/scratch/projects/2022_200/project_output/rcs/CORDEXBE2/innev/4p1000/'
 
 
 # Define directory where processing is done -- subject to change
@@ -217,13 +217,13 @@ def grid_one_variable_col(this_ds, thisVar, fillValue=None, **kwargs):
 def load_case_ctl(variables): 
     
     # case settings
-    case_ctl = 'IHistClm51Sp.hcru_hcru_mt13.4p1000.spunup'
+    case_ctl = 'IHistClm51Sp.hcru_hcru_mt13.pftsoilcol.CTL.spunup5'
     case   = case_ctl
     block  = 'lnd' 
     stream = 'h0' 
 
     # discard 2004 until 2008 as spin up years
-    start_year, end_year = 2001, 2001 
+    start_year, end_year = 2010, 2010 
     time_slice = slice(str(start_year)+"-01-01", str(end_year)+"-12-01")
     
     # import the control case
@@ -482,7 +482,7 @@ def grid_multiple_pfts_multiple_vars(ds,  variables, pft_list, case, flag_daily=
             else: 
                 text_daily = ''
 
-            procdir = '/capstor/scratch/cscs/ivanderk/processing_4p1000/' #'/project/s1207/ivanderk/scratch/' 
+            # procdir = '/capstor/scratch/cscs/ivanderk/processing_4p1000/' #'/project/s1207/ivanderk/scratch/' 
 
             ds_gridded.to_netcdf(procdir+'/postprocessing/pft_gridding/'+variable+'_'+str(pft_int)+'.'+case+text_daily+'.nc')
             print(procdir+'/postprocessing/pft_gridding/'+variable+'_'+str(pft_int)+'.'+case+text_daily+'.nc')
@@ -503,6 +503,18 @@ def calc_annual_cumulative_stress(da, da_wilting_h2osoi, mask=False):
     
     return da_stress_cumulative
 
+
+# calculate annual number of days with water stress
+def calc_days_per_year_with_stress(da, da_wilting_h2osoi, soillev = 7, mask=False): 
+
+    
+    da_wilting_delta = (da_wilting_h2osoi.isel(levsoi=range(0,soillev)).sum('levsoi') - da.isel(levsoi=range(0,soillev)).sum('levsoi'))
+    if not mask==False: 
+        da_wilting_delta = da_wilting_delta.where(mask)
+    
+    da_days_with_stress = (da_wilting_delta>0).groupby('time.year').sum()
+    
+    return da_days_with_stress.squeeze()
 
 # per pft, calculate and save regional mean delta per soil level and region
 def save_regionalmean_delta_and_delta_rel(variable, pft_list, case_ctl, case_scen, region_ids, mask_regions, scenario): 

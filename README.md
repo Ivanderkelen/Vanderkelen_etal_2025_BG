@@ -5,8 +5,8 @@ Scripts used for the analysis in Vanderkelen et al, 2025
 [include reference]
 
 ## For users
-See [main.ipynb](main.ipynb) for an overview of the preprocessing and analysis scripts. 
-    
+See [main.ipynb](main.ipynb) for an overview of the preprocessing and analysis scripts.
+
 
 ## Versions
 Version 0.1.0 - May 2025 

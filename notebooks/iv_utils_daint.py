@@ -327,6 +327,17 @@ def load_wilting_h2osoi(scenario):
     
     return da_wilting_h2osoi, da_wilting_h2osoi_scen
 
+# load precalculated wilting point datasets (in postprocessing) 
+def load_fc_h2osoi(scenario): 
+
+    ds_fc_h2osoi = xr.open_dataset(procdir+'/postprocessing/field_capacity_volumetric_soil_water_CTL.nc')
+    ds_fc_h2osoi_scen = xr.open_dataset(procdir+'/postprocessing/field_capacity_volumetric_soil_water_'+scenario+'.nc')
+
+    ds_fc_h2osoi = ds_fc_h2osoi['H2OSOI_FC']
+    ds_fc_h2osoi_scen = ds_fc_h2osoi_scen['H2OSOI_FC']
+    
+    return ds_fc_h2osoi, ds_fc_h2osoi_scen
+    
 # calculate number of gridcells in region based on mask (eg for sandy and clay soils)
 def calc_ngridcells_ofmask_inregion(da_mask, mask, region_ids): 
     da_region_list = []
@@ -470,6 +481,7 @@ def grid_multiple_pfts_multiple_vars(ds,  variables, pft_list, case, flag_daily=
             print('processing pft '+str(pft_int))
 
             da_gridded   = grid_one_variable_col(ds, variable, fillValue=None, vegtype=pft_int)
+            #da_gridded   = grid_one_variable(ds, variable, fillValue=None, vegtype=pft_int)
 
             da_gridded   = lon_pm2idl(da_gridded, fail_silently=False)
 

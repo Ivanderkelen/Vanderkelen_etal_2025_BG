@@ -2,6 +2,8 @@
 
 Scripts used for the analysis in Vanderkelen et al, 2025
 
+[![DOI](https://zenodo.org/badge/905142528.svg)](https://doi.org/10.5281/zenodo.15561256)
+
 [include reference]
 
 ## For users
